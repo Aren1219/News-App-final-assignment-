@@ -1,5 +1,7 @@
 package com.example.newsappfinalassignment.ui.list
 
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -23,39 +25,55 @@ import com.example.newsappfinalassignment.model.Data
 import com.example.newsappfinalassignment.ui.MainViewModel
 import com.example.newsappfinalassignment.ui.theme.Shapes
 import com.example.newsappfinalassignment.util.Resource
+import com.example.newsappfinalassignment.util.Screen
+import com.example.newsappfinalassignment.util.Util.formatDate
+import com.example.newsappfinalassignment.util.Util.previewNewsDataList
 import com.skydoves.landscapist.glide.GlideImage
 
-fun formatDate(date: String): String
-    = "${date.substring(8, 10)}-${date.substring(5, 7)}-${date.take(4)}"
-
 @Composable
-fun NewsListScreen(viewModel: MainViewModel, navHostController: NavHostController) {
+fun NewsListScreen(
+    viewModel: MainViewModel,
+    navHostController: NavHostController,
+    listState: LazyListState
+) {
     val newsList = viewModel.newsList.observeAsState()
-    when (newsList.value){
-        is Resource.Success<*> -> {
-            NewsListUi(list = newsList.value!!.data!!)
-        }
-        is Resource.Loading<*> -> {
-            CircularProgressIndicator()
-        }
-        is Resource.Error<*> -> {
-            Text(text = "ERROR")
-        }
+
+    newsList.value?.data?.let { NewsListUi(
+        list = it,
+        loadMore = { viewModel.getNewsList() },
+        onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
+        listState = listState
+    ) }
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (newsList.value is Resource.Loading)
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(20.dp)
+            )
     }
 }
 
 @Composable
-fun NewsListUi(list: List<Data>){
+fun NewsListUi(
+    list: List<Data>, loadMore: () -> Unit,
+    onSelect: (String) -> Unit,
+    listState: LazyListState
+)
+{
     val p = 12.dp
-    val listState = rememberLazyListState()
+//    val listState = rememberLazyListState()
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(p),
         verticalArrangement = Arrangement.spacedBy(p)
     ){
         items(list){ item ->  
-            NewsItemUi(data = item)
+            NewsItemUi(data = item, onClick = {onSelect(item.uuid)})
         }
+    }
+    listState.OnBottomReached() {
+        loadMore()
     }
 }
 
@@ -80,12 +98,16 @@ fun LazyListState.OnBottomReached(
 }
 
 @Composable
-fun NewsItemUi(data: Data){
+fun NewsItemUi(data: Data, onClick: () -> Unit){
     val cardHeight = 150.dp
     val cardPadding = 12.dp
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .height(cardHeight), elevation = 8.dp) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(cardHeight)
+            .clickable { onClick() },
+        elevation = 8.dp,
+    ) {
         Row(modifier = Modifier
             .padding(cardPadding)
             .fillMaxSize()) {
@@ -127,28 +149,5 @@ fun NewsItemUi(data: Data){
 @Preview()
 @Composable
 fun Preview() {
-    NewsListUi(previewNewsDataList)
+    NewsListUi(previewNewsDataList, {}, {}, rememberLazyListState())
 }
-
-val previewNewsData = Data(
-    listOf("A" ,"B"),
-    "A primeira-ministra de Barbados mostrou-se confiante de que dentro de alguns meses seja possível concretizar \\\"o sonho\\\" de ter ligações aéreas diretas entre ...",
-//    "/Users/arenwang/AndroidStudioProjects/NewsAppfinalassignment/app/src/main/res/drawable",
-    "https://media-manager.noticiasaominuto.com/1280/naom_6312f6d20c8aa.jpg",
-    "",
-    "",
-    "2022-09-03T07:41:34.000000Z",
-    "Análise: Demorámos a adaptar-nos ao jogo do Sporting. Devíamos ter feito um pouco mais daquilo que fizemos na segunda parte, apertar um pouco mais com o Spor...",
-    "noticiasaominuto.com",
-    "Primeira-ministra de Barbados confiante em ligações diretas para África",
-    "",
-    "",
-)
-
-val previewNewsDataList = listOf<Data>(
-    previewNewsData,
-    previewNewsData,
-    previewNewsData,
-    previewNewsData,
-    previewNewsData,
-)

@@ -2,6 +2,8 @@ package com.example.newsappfinalassignment.ui
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -29,31 +31,35 @@ class MainViewModel @Inject constructor(
     val repository: Repository
 ): ViewModel() {
 
-    private val _newsList: MutableLiveData<Resource<List<Data>>> =
-        MutableLiveData(Resource.Loading())
+    private val _newsList: MutableLiveData<Resource<List<Data>>> = MutableLiveData()
     val newsList: LiveData<Resource<List<Data>>> = _newsList
 
-    var newsListPage by mutableStateOf(1)
-    var loadedPage = 0
+    private var loadedPage = 0
 
-    val currentDate: String = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Date())
+    private val currentDate: String = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").format(Date())
 
     private val savedList: LiveData<List<Data>> = repository.getSavedNews()
 
     init {
         getNewsList()
     }
-    
+
     fun getNewsList() = viewModelScope.launch(Dispatchers.IO) {
-        _newsList.postValue(Resource.Loading())
+        if (_newsList.value is Resource.Loading<*>) return@launch
+        _newsList.postValue(Resource.Loading(_newsList.value?.data))
         val response = repository.getNews(page = loadedPage + 1, currentDate)
         if (response.isSuccessful){
-            _newsList.postValue(Resource.Success(response.body()!!.data))
+            _newsList.postValue(Resource.Success(
+                _newsList.value?.data?.plus(response.body()!!.data) ?: response.body()!!.data)
+            )
             loadedPage ++
         } else {
             _newsList.postValue(Resource.Error(response.message()))
         }
     }
+
+    fun getNewsUUID(uuid: String): Data? = _newsList.value?.data?.find { it.uuid == uuid }
+
 
     fun saveNews(data: Data) = viewModelScope.launch(Dispatchers.IO) {
         repository.saveNews(data)

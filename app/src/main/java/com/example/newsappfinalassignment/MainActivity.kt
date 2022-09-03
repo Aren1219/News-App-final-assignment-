@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,7 +19,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.newsappfinalassignment.ui.MainViewModel
+import com.example.newsappfinalassignment.ui.detail.DetailsPage
 import com.example.newsappfinalassignment.ui.list.NewsListScreen
 import com.example.newsappfinalassignment.ui.theme.NewsAppfinalAssignmentTheme
 import com.example.newsappfinalassignment.util.Screen
@@ -46,6 +50,9 @@ fun Navigation(viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.v
 
     val navController = rememberNavController()
     val items = listOf(Screen.NewsList, Screen.SavedNews)
+
+    //list state for news list
+    val listState = rememberLazyListState()
 
     Scaffold(
         bottomBar = {
@@ -76,8 +83,19 @@ fun Navigation(viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.v
         ){
             composable(Screen.NewsList.route) { NewsListScreen(
                 viewModel = viewModel,
-                navHostController = navController
+                navHostController = navController,
+                listState = listState
             ) }
+            composable(route = Screen.NewsDetails.route) { entry ->
+                val uuid = entry.arguments?.getString("uuid")
+                if (uuid != null) {
+                    DetailsPage(
+                        uuid = uuid,
+                        viewModel = viewModel,
+                        navHostController = navController
+                    )
+                }
+            }
             composable(Screen.SavedNews.route) {}
         }
     }

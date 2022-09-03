@@ -8,7 +8,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 sealed class Screen(
     val route: String,
     val title: String,
-    val icon: ImageVector?
+    val icon: ImageVector? = null,
+    val path: String? = null
 ) {
     object NewsList: Screen(
         route = "news list",
@@ -20,5 +21,9 @@ sealed class Screen(
         title = "Saved News",
         icon = Icons.Default.Favorite
     )
-
+    object NewsDetails: Screen(
+        route = "news details/{uuid}",
+        title = "News",
+        path = "news details/"
+    )
 }

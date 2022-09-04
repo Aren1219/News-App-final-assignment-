@@ -4,20 +4,25 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.newsappfinalassignment.R
 import com.example.newsappfinalassignment.model.Data
 import com.example.newsappfinalassignment.ui.MainViewModel
 import com.example.newsappfinalassignment.ui.theme.NewsAppfinalAssignmentTheme
@@ -53,18 +58,19 @@ fun Top(title: String, back: () -> Unit) {
 @Composable
 fun MoreDerails (data: Data){
     val cardPadding = 12.dp
-    val state = rememberScrollState()
     Card(modifier = Modifier.fillMaxSize(), elevation = 8.dp) {
         Column(
             modifier = Modifier
                 .padding(cardPadding)
                 .fillMaxSize()
-                .scrollable(state = state, Orientation.Vertical, true)
+                .verticalScroll(rememberScrollState())
         ) {
             GlideImage(
                 imageModel = data.imageUrl,
-                modifier = Modifier.width(250.dp),
+                modifier = Modifier.height(250.dp),
                 contentScale = ContentScale.Fit,
+                error = ImageBitmap.imageResource(id = R.drawable.placeholder_image),
+                placeHolder = ImageBitmap.imageResource(id = R.drawable.placeholder_image),
             )
             Spacer(modifier = Modifier.padding(8.dp))
             Text(text = data.title, style = MaterialTheme.typography.h5)
@@ -72,8 +78,10 @@ fun MoreDerails (data: Data){
             Text(text = Util.formatDate(data.publishedAt))
             Text(text = data.source)
             Spacer(modifier = Modifier.padding(8.dp))
+            Text(text = data.description)
+            Spacer(modifier = Modifier.padding(8.dp))
             Text(text = data.snippet)
-
+            Spacer(modifier = Modifier.padding(8.dp))
         }
     }
 }

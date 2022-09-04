@@ -117,7 +117,7 @@ fun NewsItemUi(data: Data, onClick: () -> Unit){
                     .size(cardHeight - cardPadding * 2)
                     .align(Alignment.CenterVertically)
                     .padding(end = cardPadding),
-                placeHolder = ImageBitmap.imageResource(id = R.drawable.placeholder_image)
+                error = ImageBitmap.imageResource(id = R.drawable.placeholder_image),
             )
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(

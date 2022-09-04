@@ -16,7 +16,7 @@ class RepositoryImp @Inject constructor(
 
     override suspend fun getNews(
         page: Int,
-        publishedBefore: String
+        publishedBefore: String?
     ): Response<AllNewsList> =
         api.getAllNews(page = page, publishedBefore = publishedBefore)
 

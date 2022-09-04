@@ -7,7 +7,7 @@ import retrofit2.Response
 
 interface Repository {
 
-    suspend fun getNews(page: Int, publishedBefore: String): Response<AllNewsList>
+    suspend fun getNews(page: Int, publishedBefore: String?): Response<AllNewsList>
 
     fun getSavedNews(): LiveData<List<Data>>
 

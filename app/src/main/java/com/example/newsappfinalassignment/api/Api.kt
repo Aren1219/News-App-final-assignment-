@@ -13,7 +13,7 @@ interface Api {
     suspend fun getAllNews(
         @Query("page") page: Int = 1,
         @Query("language") language: String = "en",
-        @Query("published_before") publishedBefore: String,
+        @Query("published_before") publishedBefore: String?,
         @Query("api_token") token: String = TOKEN
     ): Response<AllNewsList>
 }

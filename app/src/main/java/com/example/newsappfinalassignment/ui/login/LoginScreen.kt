@@ -1,6 +1,8 @@
 package com.example.newsappfinalassignment.ui.login
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -10,6 +12,7 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -19,13 +22,15 @@ import com.example.newsappfinalassignment.ui.theme.NewsAppfinalAssignmentTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlin.math.sinh
 
 @Composable
-fun LoginScreen(auth: FirebaseAuth) {
+fun LoginScreen(auth: FirebaseAuth, signedIn: () -> Unit) {
 
-    val TAG = "log in screen"
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -57,8 +62,11 @@ fun LoginScreen(auth: FirebaseAuth) {
                 Button(onClick = {
                     auth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener{
-                            if (it.isSuccessful) Log.d(TAG, "user sign in successful")
-                            else Log.d(TAG, "user sign in failed", it.exception)
+                            if (it.isSuccessful) {
+                                Toast.makeText(context, "sign in successful", Toast.LENGTH_SHORT).show()
+                                signedIn()
+                            }
+                            else Toast.makeText(context, "sign in failed", Toast.LENGTH_SHORT).show()
                         }
                 }) {
                     Text(text = "Sign in")
@@ -66,8 +74,10 @@ fun LoginScreen(auth: FirebaseAuth) {
                 Button(onClick = {
                     auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener{
-                            if (it.isSuccessful) Log.d(TAG, "user sign up successful")
-                            else Log.d(TAG, "user sign up failed", it.exception)
+                            if (it.isSuccessful)
+                                Toast.makeText(context, "sign up successful", Toast.LENGTH_SHORT).show()
+                            else
+                                Toast.makeText(context, "sign up failed", Toast.LENGTH_SHORT).show()
                         }
                 }) {
                     Text(text = "Sign up")
@@ -82,6 +92,6 @@ fun LoginScreen(auth: FirebaseAuth) {
 @Composable
 fun LoginPreview() {
     NewsAppfinalAssignmentTheme {
-        LoginScreen(Firebase.auth)
+        LoginScreen(Firebase.auth, {})
     }
 }

@@ -23,12 +23,18 @@ import androidx.navigation.navArgument
 import com.example.newsappfinalassignment.ui.MainViewModel
 import com.example.newsappfinalassignment.ui.detail.DetailsPage
 import com.example.newsappfinalassignment.ui.list.NewsListScreen
+import com.example.newsappfinalassignment.ui.login.LoginScreen
 import com.example.newsappfinalassignment.ui.theme.NewsAppfinalAssignmentTheme
 import com.example.newsappfinalassignment.util.Screen
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val auth by lazy {
+        Firebase.auth
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -38,7 +44,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Navigation()
+                    if (auth.currentUser == null) LoginScreen(auth = auth)
+                    else Navigation()
                 }
             }
         }

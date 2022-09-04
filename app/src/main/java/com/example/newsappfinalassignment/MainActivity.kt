@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.newsappfinalassignment.ui.MainViewModel
 import com.example.newsappfinalassignment.ui.detail.DetailsPage
+import com.example.newsappfinalassignment.ui.list.FavouriteScreen
 import com.example.newsappfinalassignment.ui.list.NewsListScreen
 import com.example.newsappfinalassignment.ui.login.LoginScreen
 import com.example.newsappfinalassignment.ui.theme.NewsAppfinalAssignmentTheme
@@ -88,11 +89,13 @@ fun Navigation(viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.v
             startDestination = Screen.NewsList.route,
             modifier = Modifier.padding(innerPadding)
         ){
-            composable(Screen.NewsList.route) { NewsListScreen(
-                viewModel = viewModel,
-                navHostController = navController,
-                listState = listState
-            ) }
+            composable(Screen.NewsList.route) {
+                NewsListScreen(
+                    viewModel = viewModel,
+                    navHostController = navController,
+                    listState = listState
+                )
+            }
             composable(route = Screen.NewsDetails.route) { entry ->
                 val uuid = entry.arguments?.getString("uuid")
                 if (uuid != null) {
@@ -103,7 +106,12 @@ fun Navigation(viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.v
                     )
                 }
             }
-            composable(Screen.SavedNews.route) {}
+            composable(Screen.SavedNews.route) {
+                FavouriteScreen(
+                    viewModel = viewModel,
+                    navHostController = navController
+                )
+            }
         }
     }
 }

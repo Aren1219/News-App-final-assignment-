@@ -42,7 +42,8 @@ fun NewsListScreen(
         list = it,
         loadMore = { viewModel.getNewsList() },
         onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
-        listState = listState
+        listState = listState,
+        onSave = {data -> viewModel.saveNews(data)}
     ) }
     Box(modifier = Modifier.fillMaxSize()) {
         if (newsList.value is Resource.Loading)
@@ -56,8 +57,10 @@ fun NewsListScreen(
 
 @Composable
 fun NewsListUi(
-    list: List<Data>, loadMore: () -> Unit,
+    list: List<Data>,
+    loadMore: () -> Unit,
     onSelect: (String) -> Unit,
+    onSave: (Data) -> Unit,
     listState: LazyListState
 )
 {
@@ -69,7 +72,11 @@ fun NewsListUi(
         verticalArrangement = Arrangement.spacedBy(p)
     ){
         items(list){ item ->  
-            NewsItemUi(data = item, onClick = {onSelect(item.uuid)})
+            NewsItemUi(
+                data = item,
+                onClick = {onSelect(item.uuid)},
+                favourite = {onSave(item)}
+            )
         }
     }
     listState.OnBottomReached() {
@@ -98,7 +105,7 @@ fun LazyListState.OnBottomReached(
 }
 
 @Composable
-fun NewsItemUi(data: Data, onClick: () -> Unit){
+fun NewsItemUi(data: Data, onClick: () -> Unit, favourite: () -> Unit){
     val cardHeight = 150.dp
     val cardPadding = 12.dp
     Card(
@@ -134,7 +141,7 @@ fun NewsItemUi(data: Data, onClick: () -> Unit){
                     Text(text = data.source)
                 }
                 FloatingActionButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { favourite() },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .size(40.dp),
@@ -149,5 +156,5 @@ fun NewsItemUi(data: Data, onClick: () -> Unit){
 @Preview()
 @Composable
 fun Preview() {
-    NewsListUi(previewNewsDataList, {}, {}, rememberLazyListState())
+    NewsListUi(previewNewsDataList, {}, {}, {}, rememberLazyListState())
 }

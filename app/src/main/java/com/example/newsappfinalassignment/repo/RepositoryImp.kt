@@ -27,6 +27,6 @@ class RepositoryImp @Inject constructor(
     }
 
     override suspend fun deleteNews(data: Data) {
-        deleteNews(data)
+        newsDao.deleteNews(data)
     }
 }

@@ -24,7 +24,7 @@ class MainViewModel @Inject constructor(
 
     private var currentDateTime: String? = null
 
-    private val savedList: LiveData<List<Data>> = repository.getSavedNews()
+    val savedList: LiveData<List<Data>> = repository.getSavedNews()
 
     init {
         getNewsList()

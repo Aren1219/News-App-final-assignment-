@@ -46,6 +46,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun getNewsUUID(uuid: String): Data? = _newsList.value?.data?.find { it.uuid == uuid }
+        ?: savedList.value?.find { it.uuid == uuid }
 
 
     fun saveNews(data: Data) = viewModelScope.launch(Dispatchers.IO) {

@@ -8,8 +8,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
+import androidx.compose.runtime.collection.mutableVectorOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -36,13 +36,14 @@ fun DetailsPage(
     viewModel: MainViewModel,
     navHostController: NavHostController,
 ) {
-    val newsData = viewModel.getNewsUUID(uuid = uuid)!!
-    Column() {
-        Top(title = newsData.title) { navHostController.navigate(Screen.NewsList.route) }
-        Column(modifier = Modifier.padding(12.dp)) {
-            MoreDerails(data = newsData)
+    val newsData by remember { mutableStateOf(viewModel.getNewsUUID(uuid)) }
+    if (newsData != null)
+        Column() {
+            Top(title = newsData!!.title) { navHostController.navigate(Screen.NewsList.route) }
+            Column(modifier = Modifier.padding(12.dp)) {
+                MoreDerails(data = newsData!!)
+            }
         }
-    }
 }
 
 @Composable
@@ -95,7 +96,7 @@ fun PreviewTop() {
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true)
 fun PreviewDetails(){
     NewsAppfinalAssignmentTheme() {
         Column() {

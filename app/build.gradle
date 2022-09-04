@@ -4,6 +4,7 @@ plugins {
     //hilt
     id "kotlin-kapt"
     id "dagger.hilt.android.plugin"
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -62,6 +63,12 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
+    //firebase
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.8'
+
+    //firebaseUI
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
 
     //hilt
     implementation "com.google.dagger:hilt-android:2.42"

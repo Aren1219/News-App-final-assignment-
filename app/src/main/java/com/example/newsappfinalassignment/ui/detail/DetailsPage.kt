@@ -100,7 +100,7 @@ fun PreviewTop() {
 fun PreviewDetails(){
     NewsAppfinalAssignmentTheme() {
         Column() {
-            MoreDerails(data = Util.previewNewsData)
+            MoreDerails(data = Util.previewNewsData())
         }
     }
 }

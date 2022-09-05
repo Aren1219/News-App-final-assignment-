@@ -88,7 +88,7 @@ fun NewsListUi(
 fun LazyListState.OnBottomReached(
     loadMore: () -> Unit
 ) {
-    //derive state for loading more items
+    //derive state for checking if need to loading more items
     val shouldLoadMore = remember {
         derivedStateOf{
             val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
@@ -156,5 +156,5 @@ fun NewsItemUi(data: Data, onClick: () -> Unit, favourite: () -> Unit){
 @Preview()
 @Composable
 fun Preview() {
-    NewsListUi(previewNewsDataList, {}, {}, {}, rememberLazyListState())
+    NewsListUi(previewNewsDataList(), {}, {}, {}, rememberLazyListState())
 }

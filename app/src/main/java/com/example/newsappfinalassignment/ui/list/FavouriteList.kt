@@ -1,12 +1,8 @@
 package com.example.newsappfinalassignment.ui.list
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -22,22 +18,39 @@ import com.example.newsappfinalassignment.util.Screen
 fun FavouriteScreen(
     viewModel: MainViewModel,
     navHostController: NavHostController,
+    signOut: () -> Unit
 ){
-    val list = viewModel.savedList.observeAsState()
-    if (list.value.isNullOrEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = "No saved news",
-                style = MaterialTheme.typography.h5
+    Scaffold(topBar = {
+        Surface(color = MaterialTheme.colors.primary, modifier = Modifier.fillMaxWidth()) {
+            Row(horizontalArrangement = Arrangement.End) {
+                Button(onClick = { signOut() }) {
+                    Text(text = "Sign out")
+                }
+            }
+        }
+    }
+    ) { innerPadding ->
+        val list = viewModel.savedList.observeAsState()
+        if (list.value.isNullOrEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "No saved news",
+                    style = MaterialTheme.typography.h5
+                )
+            }
+        } else {
+            NewsListUi(
+                list = list.value!!,
+                loadMore = {},
+                onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
+                onSave = {data -> viewModel.deleteNews(data)},
+                listState = rememberLazyListState(),
             )
         }
-    } else {
-        NewsListUi(
-            list = list.value!!,
-            loadMore = {},
-            onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
-            onSave = {data -> viewModel.deleteNews(data)},
-            listState = rememberLazyListState(),
-        )
     }
 }

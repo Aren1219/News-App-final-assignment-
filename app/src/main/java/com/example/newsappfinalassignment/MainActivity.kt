@@ -3,6 +3,7 @@ package com.example.newsappfinalassignment
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,7 +67,11 @@ class MainActivity : ComponentActivity() {
 //                    var signedIn by remember { mutableStateOf(auth.currentUser != null) }
                     signedIn = auth.currentUser != null
                     if (!signedIn) LoginScreen(auth = auth, { signedIn = true }, {googleSignIn()})
-                    else Navigation()
+                    else Navigation(signOut = {
+                        auth.signOut()
+                        signedIn = false
+                        Toast.makeText(this, "signed out", Toast.LENGTH_SHORT).show()
+                    })
                 }
             }
         }
@@ -110,7 +115,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Navigation(viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()){
+fun Navigation(
+    viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
+    signOut: () -> Unit
+){
 
     val navController = rememberNavController()
     val items = listOf(Screen.NewsList, Screen.SavedNews)
@@ -165,7 +173,8 @@ fun Navigation(viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.v
             composable(Screen.SavedNews.route) {
                 FavouriteScreen(
                     viewModel = viewModel,
-                    navHostController = navController
+                    navHostController = navController,
+                    signOut = {signOut()}
                 )
             }
         }

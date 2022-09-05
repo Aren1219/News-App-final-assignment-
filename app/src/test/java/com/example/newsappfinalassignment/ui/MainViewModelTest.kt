@@ -20,6 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TestRule
+import org.mockito.Mock
 import org.mockito.MockitoAnnotations
 
 class MainViewModelTest {
@@ -32,11 +33,10 @@ class MainViewModelTest {
 
     private lateinit var viewModel: MainViewModel
 
-
     @OptIn(ExperimentalCoroutinesApi::class)
     @Before
-    fun setUp(){
-//        MockitoAnnotations.openMocks(this)
+    fun setUp() {
+        MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
         val fakeRepository = FakeRepository()
         runBlocking {

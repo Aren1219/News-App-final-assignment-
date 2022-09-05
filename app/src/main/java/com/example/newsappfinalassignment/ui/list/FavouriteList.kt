@@ -37,7 +37,7 @@ fun FavouriteScreen(
             loadMore = {},
             onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
             onSave = {data -> viewModel.deleteNews(data)},
-            listState = rememberLazyListState()
+            listState = rememberLazyListState(),
         )
     }
 }

@@ -3,21 +3,27 @@ package com.example.newsappfinalassignment.ui.login
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.newsappfinalassignment.R
 import com.example.newsappfinalassignment.ui.theme.NewsAppfinalAssignmentTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -25,7 +31,7 @@ import com.google.firebase.ktx.Firebase
 import kotlin.math.sinh
 
 @Composable
-fun LoginScreen(auth: FirebaseAuth, signedIn: () -> Unit) {
+fun LoginScreen(auth: FirebaseAuth, signedIn: () -> Unit, googleSignIn: () -> Unit) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -84,7 +90,9 @@ fun LoginScreen(auth: FirebaseAuth, signedIn: () -> Unit) {
                 }
             }
         }
-//        GoogleButton()
+        Button(onClick = {googleSignIn()}) {
+            Text(text = "Google sign in")
+        }
     }
 }
 
@@ -92,6 +100,6 @@ fun LoginScreen(auth: FirebaseAuth, signedIn: () -> Unit) {
 @Composable
 fun LoginPreview() {
     NewsAppfinalAssignmentTheme {
-        LoginScreen(Firebase.auth, {})
+        LoginScreen(Firebase.auth, {}, {})
     }
 }

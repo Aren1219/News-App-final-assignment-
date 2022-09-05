@@ -1,6 +1,5 @@
 package com.example.newsappfinalassignment.ui.list
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,22 +7,22 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.newsappfinalassignment.R
 import com.example.newsappfinalassignment.model.Data
 import com.example.newsappfinalassignment.ui.MainViewModel
-import com.example.newsappfinalassignment.ui.theme.Shapes
 import com.example.newsappfinalassignment.util.Resource
 import com.example.newsappfinalassignment.util.Screen
 import com.example.newsappfinalassignment.util.Util.formatDate
@@ -38,21 +37,28 @@ fun NewsListScreen(
 ) {
     val newsList = viewModel.newsList.observeAsState()
 
-    newsList.value?.data?.let { NewsListUi(
-        list = it,
-        loadMore = { viewModel.getNewsList() },
-        onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
-        listState = listState,
-        onSave = {data -> viewModel.saveNews(data)}
-    ) }
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (newsList.value is Resource.Loading)
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(20.dp)
-            )
+    if (newsList.value is Resource.Error<*>) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            Text(text = newsList.value!!.message!!, style = MaterialTheme.typography.h5)
+        }
+    } else {
+        newsList.value?.data?.let { NewsListUi(
+            list = it,
+            loadMore = { viewModel.getNewsList() },
+            onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
+            listState = listState,
+            onSave = {data -> viewModel.saveNews(data)}
+        ) }
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (newsList.value is Resource.Loading)
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(20.dp)
+                )
+        }
     }
+
 }
 
 @Composable
@@ -105,9 +111,14 @@ fun LazyListState.OnBottomReached(
 }
 
 @Composable
-fun NewsItemUi(data: Data, onClick: () -> Unit, favourite: () -> Unit){
+fun NewsItemUi(
+    data: Data,
+    onClick: () -> Unit,
+    favourite: () -> Unit,
+){
     val cardHeight = 150.dp
     val cardPadding = 12.dp
+    var isSaved by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,13 +151,19 @@ fun NewsItemUi(data: Data, onClick: () -> Unit, favourite: () -> Unit){
                     Text(text = formatDate(data.publishedAt))
                     Text(text = data.source)
                 }
-                FloatingActionButton(
-                    onClick = { favourite() },
+                IconButton(
+                    onClick = {
+                        favourite()
+                        isSaved = true
+                              },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .size(40.dp),
                 ) {
-
+                    Icon(
+                        imageVector = if (!isSaved) Icons.Default.FavoriteBorder else Icons.Default.Favorite,
+                        contentDescription = "favourite",
+                    )
                 }
             }
         }

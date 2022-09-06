@@ -47,7 +47,9 @@ fun FavouriteScreen(
             NewsListUi(
                 list = list.value!!,
                 loadMore = {},
-                onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
+                onSelect = {uuid -> navHostController.navigate(
+                    Screen.NewsDetails.path + Screen.SavedNews.title + "/" + uuid
+                )},
                 onSave = {data -> viewModel.deleteNews(data)},
                 listState = rememberLazyListState(),
             )

@@ -162,8 +162,10 @@ fun Navigation(
             }
             composable(route = Screen.NewsDetails.route) { entry ->
                 val uuid = entry.arguments?.getString("uuid")
-                if (uuid != null) {
+                val parent = entry.arguments?.getString("parent")
+                if (uuid != null && parent != null) {
                     DetailsPage(
+                        parent = parent,
                         uuid = uuid,
                         viewModel = viewModel,
                         navHostController = navController

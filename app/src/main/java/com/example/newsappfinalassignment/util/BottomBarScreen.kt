@@ -22,7 +22,7 @@ sealed class Screen(
         icon = Icons.Default.Favorite
     )
     object NewsDetails: Screen(
-        route = "news details/{uuid}",
+        route = "news details/{parent}/{uuid}",
         title = "News",
         path = "news details/"
     )

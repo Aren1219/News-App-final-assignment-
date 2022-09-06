@@ -46,7 +46,9 @@ fun NewsListScreen(
         newsList.value?.data?.let { NewsListUi(
             list = it,
             loadMore = { viewModel.getNewsList() },
-            onSelect = {uuid -> navHostController.navigate(Screen.NewsDetails.path + uuid)},
+            onSelect = {uuid -> navHostController.navigate(
+                Screen.NewsDetails.path + Screen.NewsList.title + "/" + uuid
+            )},
             listState = listState,
             onSave = {data -> viewModel.saveNews(data)}
         ) }
@@ -59,7 +61,6 @@ fun NewsListScreen(
                 )
         }
     }
-
 }
 
 @Composable

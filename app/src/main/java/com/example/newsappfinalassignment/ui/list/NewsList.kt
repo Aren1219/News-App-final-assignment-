@@ -37,7 +37,6 @@ fun NewsListScreen(
 ) {
     val newsList = viewModel.newsList.observeAsState()
 
-
     if (newsList.value is Resource.Error<*>) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
             Text(text = newsList.value!!.message!!, style = MaterialTheme.typography.h5)

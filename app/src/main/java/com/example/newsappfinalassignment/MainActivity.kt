@@ -64,7 +64,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-//                    var signedIn by remember { mutableStateOf(auth.currentUser != null) }
                     signedIn = auth.currentUser != null
                     if (!signedIn) LoginScreen(auth = auth, { signedIn = true }, {googleSignIn()})
                     else Navigation(signOut = {
@@ -77,6 +76,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SIGN_IN){

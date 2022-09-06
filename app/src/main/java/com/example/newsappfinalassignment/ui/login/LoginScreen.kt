@@ -1,40 +1,35 @@
 package com.example.newsappfinalassignment.ui.login
 
-import android.content.Context
-import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.Button
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.newsappfinalassignment.R
 import com.example.newsappfinalassignment.ui.theme.NewsAppfinalAssignmentTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import kotlin.math.sinh
 
 @Composable
 fun LoginScreen(auth: FirebaseAuth, signedIn: () -> Unit, googleSignIn: () -> Unit) {
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val focusManager = LocalFocusManager.current
 
     val context = LocalContext.current
 
@@ -54,14 +49,22 @@ fun LoginScreen(auth: FirebaseAuth, signedIn: () -> Unit, googleSignIn: () -> Un
                 onValueChange = {text -> email = text },
                 label = { Text(text = "email")},
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = {focusManager.moveFocus(FocusDirection.Down)})
             )
             TextField(
                 value = password,
-                onValueChange = {text -> password = text },
-                label = { Text(text = "password")},
+                onValueChange = { text -> password = text },
+                label = { Text(text = "password") },
                 modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onDone = {focusManager.clearFocus()}),
                 visualTransformation = PasswordVisualTransformation()
             )
             Column(horizontalAlignment = Alignment.End) {

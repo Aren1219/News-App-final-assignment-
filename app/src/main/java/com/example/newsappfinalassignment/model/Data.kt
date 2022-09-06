@@ -3,8 +3,6 @@ package com.example.newsappfinalassignment.model
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.example.newsappfinalassignment.db.Converters
 import com.google.gson.annotations.SerializedName
 
 @Entity(

@@ -1,5 +1,6 @@
 package com.example.newsappfinalassignment.ui.list
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.*
@@ -15,6 +17,8 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,6 +39,7 @@ fun NewsListScreen(
     navHostController: NavHostController,
     listState: LazyListState
 ) {
+    val context = LocalContext.current
     val newsList = viewModel.newsList.observeAsState()
 
     if (newsList.value is Resource.Error<*>) {
@@ -49,7 +54,11 @@ fun NewsListScreen(
                 Screen.NewsDetails.path + Screen.NewsList.title + "/" + uuid
             )},
             listState = listState,
-            onSave = {data -> viewModel.saveNews(data)}
+            onSave = { data ->
+                viewModel.saveNews(data)
+                Toast.makeText(context, "News saved!", Toast.LENGTH_SHORT).show()
+                     },
+            icon = Icons.Default.Add
         ) }
         Box(modifier = Modifier.fillMaxSize()) {
             if (newsList.value is Resource.Loading)
@@ -68,7 +77,8 @@ fun NewsListUi(
     loadMore: () -> Unit,
     onSelect: (String) -> Unit,
     onSave: (Data) -> Unit,
-    listState: LazyListState
+    listState: LazyListState,
+    icon: ImageVector
 )
 {
     val p = 12.dp
@@ -82,7 +92,8 @@ fun NewsListUi(
             NewsItemUi(
                 data = item,
                 onClick = {onSelect(item.uuid)},
-                favourite = {onSave(item)}
+                favourite = {onSave(item)},
+                icon = icon
             )
         }
     }
@@ -116,10 +127,11 @@ fun NewsItemUi(
     data: Data,
     onClick: () -> Unit,
     favourite: () -> Unit,
+    icon: ImageVector
 ){
     val cardHeight = 150.dp
     val cardPadding = 12.dp
-    var isSaved by remember { mutableStateOf(false) }
+//    var isSaved by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,14 +167,15 @@ fun NewsItemUi(
                 IconButton(
                     onClick = {
                         favourite()
-                        isSaved = true
+//                        isSaved = true
                               },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .size(40.dp),
                 ) {
                     Icon(
-                        imageVector = if (!isSaved) Icons.Default.FavoriteBorder else Icons.Default.Favorite,
+//                        imageVector = if (!isSaved) Icons.Default.FavoriteBorder else Icons.Default.Favorite,
+                        imageVector = icon,
                         contentDescription = "favourite",
                     )
                 }
@@ -174,5 +187,5 @@ fun NewsItemUi(
 @Preview()
 @Composable
 fun Preview() {
-    NewsListUi(previewNewsDataList(), {}, {}, {}, rememberLazyListState())
+    NewsListUi(previewNewsDataList(), {}, {}, {}, rememberLazyListState(), icon = Icons.Default.Add)
 }
